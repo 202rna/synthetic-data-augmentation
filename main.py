@@ -100,7 +100,7 @@ def main():
 
         print(f"[{object_index}/{len(extracted_objects)}] {object_path.name}")
 
-    print("\n=== Обработка завершена ===")
+    print("\n=== Result ===")
     print(f"Extract objeacts: {len(extracted_objects)}")
     print(f"Background counts: {BACKGROUND_COUNT}")
     print(f"Created images: {total}")

@@ -21,7 +21,6 @@ def compose_object(background, object_rgba, output_path: Path):
     if obj_h > bg_h or obj_w > bg_w:
         raise ValueError("Объект больше фона. Нужно уменьшить объект.")
 
-    # Размещаем объект по центру
     x = (bg_w - obj_w) // 2
     y = (bg_h - obj_h) // 2
 
@@ -30,10 +29,8 @@ def compose_object(background, object_rgba, output_path: Path):
     object_bgr = object_rgba[:, :, :3]
     alpha = object_rgba[:, :, 3:4] / 255.0
 
-    # Смешиваем объект с фоном
     roi[:] = (object_bgr * alpha + roi * (1 - alpha)).astype(np.uint8)
 
-    # Сохраняем изображение
     output_path = Path(output_path)
     output_path.parent.mkdir(parents=True, exist_ok=True)
 
@@ -42,7 +39,6 @@ def compose_object(background, object_rgba, output_path: Path):
     if not success:
         raise RuntimeError(f"Не удалось сохранить изображение: {output_path}")
 
-    # Рассчитываем YOLO bbox
     x_center = (x + obj_w / 2) / bg_w
     y_center = (y + obj_h / 2) / bg_h
 

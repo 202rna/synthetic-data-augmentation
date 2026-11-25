@@ -51,7 +51,6 @@ def extract_objects(
 
                 class_id = int(class_id)
 
-                # Переводим YOLO bbox в пиксели
                 x_center *= W
                 y_center *= H
                 width *= W
@@ -70,11 +69,9 @@ def extract_objects(
                 if x2 <= x1 or y2 <= y1:
                     continue
 
-                # Размеры исходного bbox
                 bbox_w = x2 - x1
                 bbox_h = y2 - y1
 
-                # Добавляем контекст вокруг объекта
                 pad_x = max(10, int(bbox_w * padding))
                 pad_y = max(10, int(bbox_h * padding))
 
@@ -90,7 +87,6 @@ def extract_objects(
                 if h < 5 or w < 5:
                     continue
 
-                # Координаты исходного bbox внутри расширенного crop
                 rect_x = x1 - crop_x1
                 rect_y = y1 - crop_y1
 
@@ -100,7 +96,6 @@ def extract_objects(
                 if rect_w < 2 or rect_h < 2:
                     continue
 
-                # Инициализация GrabCut
                 mask = np.zeros((h, w), np.uint8)
 
                 bgd_model = np.zeros((1, 65), np.float64)
@@ -121,19 +116,16 @@ def extract_objects(
                     print(f"Ошибка GrabCut для {image_path.name}: {error}")
                     continue
 
-                # Получаем бинарную маску
                 mask_binary = np.where(
                     (mask == cv2.GC_FGD) | (mask == cv2.GC_PR_FGD), 1, 0
                 ).astype(np.uint8)
 
-                # Создаём изображение с альфа-каналом
                 alpha = mask_binary * 255
 
                 object_rgba = cv2.cvtColor(crop, cv2.COLOR_BGR2BGRA)
 
                 object_rgba[:, :, 3] = alpha
 
-                # Сохраняем объект
                 object_path = image_output_dir / f"object_{object_index}.png"
 
                 success = cv2.imwrite(str(object_path), object_rgba)
